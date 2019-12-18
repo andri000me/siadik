@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
 |--------------------------------------------------------------------------
@@ -126,7 +126,7 @@ $config['rest_auth'] = 'basic';
 | Note: If 'rest_auth' is set to 'session' then change 'auth_source' to the name of the session variable
 |
 */
-$config['auth_source'] = 'ldap';
+$config['auth_source'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -183,6 +183,7 @@ $config['auth_library_function'] = '';
 // $config['auth_override_class_method']['deals']['insert'] = 'digest';
 // $config['auth_override_class_method']['accounts']['user'] = 'basic';
 // $config['auth_override_class_method']['dashboard']['*'] = 'basic';
+
 
 // ---Uncomment list line for the wildard unit test
 // $config['auth_override_class_method']['wildcard_test_cases']['*'] = 'basic';
@@ -376,7 +377,7 @@ $config['rest_key_length'] = 40;
 | 2012/06/12. See RFC 6648 specification for more details
 |
 */
-$config['rest_key_name'] = 'X-API-KEY';
+$config['rest_key_name'] = 'X-SIADIK-KEY';
 
 /*
 |--------------------------------------------------------------------------
@@ -533,7 +534,7 @@ $config['rest_ajax_only'] = false;
 | Language file to load from the language directory
 |
 */
-$config['rest_language'] = 'english';
+$config['rest_language'] = 'indonesia';
 
 /*
 |--------------------------------------------------------------------------
@@ -561,7 +562,7 @@ $config['allowed_cors_headers'] = [
   'Content-Type',
   'Accept',
   'Access-Control-Request-Method',
-  'X-API-KEY',
+  'X-SIADIK-KEY',
   'Authorization'
 ];
 
@@ -579,7 +580,7 @@ $config['allowed_cors_methods'] = [
   'OPTIONS',
   'PUT',
   'PATCH',
-  'DELETE',
+  'DELETE'
 ];
 
 /*
@@ -611,7 +612,7 @@ $config['allowed_cors_origins'] = [];
 | CORS Forced Headers
 |--------------------------------------------------------------------------
 |
-| If using CORS checks, always include the headers and values specified here
+| If using CORS checks, always include the headers and values specified here 
 | in the OPTIONS client preflight.
 | Example:
 | $config['forced_cors_headers'] = [
@@ -620,7 +621,7 @@ $config['allowed_cors_origins'] = [];
 |
 | Added because of how Sencha Ext JS framework requires the header
 | Access-Control-Allow-Credentials to be set to true to allow the use of
-| credentials in the REST Proxy.
+| credentials in the REST Proxy. 
 | See documentation here:
 | http://docs.sencha.com/extjs/6.5.2/classic/Ext.data.proxy.Rest.html#cfg-withCredentials
 |
