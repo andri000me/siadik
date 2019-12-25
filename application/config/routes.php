@@ -56,12 +56,43 @@ $route['login'] = 'auth';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = true;
 
+$route['user/(:num)'] = 'user/detail/$1';
+
+$route['survei_foto/add'] = 'survei_foto/add';
+$route['survei_foto/edit/(:any)'] = 'survei_foto/edit/$1';
+$route['survei_foto/confirm/(:any)'] = 'survei_foto/confirm/$1';
+$route['survei_foto/(:any)'] = 'survei_foto/detail/$1';
+
+$route['properti/add'] = 'properti/add';
+$route['properti/edit/(:any)'] = 'properti/edit/$1';
+$route['properti/(:any)'] = 'properti/detail/$1';
+
+$route['showing/add'] = 'showing/add';
+$route['showing/edit/(:any)'] = 'showing/edit/$1';
+$route['showing/(:any)'] = 'showing/detail/$1';
+
+$route['deal/add'] = 'deal/add';
+$route['deal/edit/(:any)'] = 'deal/edit/$1';
+$route['deal/(:any)'] = 'deal/detail/$1';
+
 # ROUTE REST API
 
 /*
 | -------------------------------------------------------------------------
-| Sample REST API Routes
+| REST API Routes
 | -------------------------------------------------------------------------
 */
-$route['api/example/users/(:num)'] = 'api/example/users/id/$1'; // Example 4
-$route['api/example/users/(:num)(\.)([a-zA-Z0-9_-]+)(.*)'] = 'api/example/users/id/$1/format/$3$4'; // Example 8
+$route['api/user/add'] = 'api/user/add';
+$route['api/user/(:num)'] = 'api/user/detail/$1';
+
+$route['api/survei_foto/add'] = 'api/survei_foto/add';
+$route['api/survei_foto/(:any)'] = 'api/survei_foto/detail/$1';
+
+$route['api/properti/add'] = 'api/properti/add';
+$route['api/properti/(:any)'] = 'api/properti/detail/$1';
+
+$route['api/iklan/add'] = 'api/iklan/add';
+$route['api/iklan/(:any)'] = 'api/iklan/detail/$1';
+
+$route['api/showing/add'] = 'api/showing/add';
+$route['api/showing/(:any)'] = 'api/showing/detail/$1';

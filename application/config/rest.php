@@ -377,7 +377,7 @@ $config['rest_key_length'] = 40;
 | 2012/06/12. See RFC 6648 specification for more details
 |
 */
-$config['rest_key_name'] = 'X-SIADIK-KEY';
+$config['rest_key_name'] = 'X-API-KEY';
 
 /*
 |--------------------------------------------------------------------------
@@ -534,7 +534,7 @@ $config['rest_ajax_only'] = false;
 | Language file to load from the language directory
 |
 */
-$config['rest_language'] = 'indonesia';
+$config['rest_language'] = 'english';
 
 /*
 |--------------------------------------------------------------------------
@@ -562,7 +562,7 @@ $config['allowed_cors_headers'] = [
   'Content-Type',
   'Accept',
   'Access-Control-Request-Method',
-  'X-SIADIK-KEY',
+  'X-API-KEY',
   'Authorization'
 ];
 
