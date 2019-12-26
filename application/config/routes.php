@@ -100,4 +100,5 @@ $route['api/showing/add'] = 'api/showing/add';
 $route['api/showing/(:any)'] = 'api/showing/detail/$1';
 
 $route['api/deal/add'] = 'api/deal/add';
+$route['api/deal/report'] = 'api/deal/report';
 $route['api/deal/(:any)'] = 'api/deal/detail/$1';

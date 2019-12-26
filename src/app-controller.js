@@ -18,7 +18,7 @@ toastr.options = {
 
 const dashboardController = ((Set) => {
 
-    const fetchSurvei = level => {
+    const fetchSurvei = (level, CHART = null) => {
         $.ajax({
             url: `${BASE_URL}api/survei_foto`,
             type: 'GET',
@@ -29,6 +29,21 @@ const dashboardController = ((Set) => {
             },
             success: ({ data }) => {
                 $('.count_survei').text(data.length)
+
+                if((level === 'Agen' || level === 'Manager' || level === 'Telemarketing') && CHART !== null){
+                    let proses = data.filter(v => v.status === 'Proses').length;
+                    let konfirmasi = data.filter(v => v.status === 'Konfirmasi').length;
+                    let tolak = data.filter(v => v.status === 'Tolak').length;
+
+                    CHART.data.labels.push('Proses');
+                    CHART.data.datasets[0].data.push(proses)
+                    CHART.data.labels.push('Konfirmasi');
+                    CHART.data.datasets[0].data.push(konfirmasi)
+                    CHART.data.labels.push('Tolak');
+                    CHART.data.datasets[0].data.push(tolak)
+                    
+                    CHART.update();
+                }
             },
             error: err => {
                 const { error } = err.responseJSON
@@ -37,7 +52,7 @@ const dashboardController = ((Set) => {
         })
     }
 
-    const fetchProperti = (level, CHART) => {
+    const fetchProperti = (level, CHART = null, OTHER = null) => {
         $.ajax({
             url: `${BASE_URL}api/properti`,
             type: 'GET',
@@ -48,6 +63,30 @@ const dashboardController = ((Set) => {
             },
             success: ({ data }) => {
                 $('.count_properti').text(data.length)
+
+                if(CHART !== null){
+                    let terjual = data.filter(v => v.terjual === 'Y').length;
+                    let available = data.filter(v => v.terjual === 'T').length;
+
+                    CHART.data.labels.push('Terjual');
+                    CHART.data.datasets[0].data.push(terjual)
+                    CHART.data.labels.push('Available');
+                    CHART.data.datasets[0].data.push(available)
+
+                    CHART.update();
+                }
+
+                if(OTHER !== null){
+                    let belum_diposting = data.filter(v => v.iklan === null).length;
+                    let posting = data.filter(v => v.iklan !== null).length;
+
+                    OTHER.data.labels.push('Belum diposting');
+                    OTHER.data.datasets[0].data.push(belum_diposting)
+                    OTHER.data.labels.push('Terposting');
+                    OTHER.data.datasets[0].data.push(posting)
+
+                    OTHER.update();
+                }
             },
             error: err => {
                 const { error } = err.responseJSON
@@ -94,13 +133,417 @@ const dashboardController = ((Set) => {
         })
     }
 
+    const fetchUser = level => {
+        $.ajax({
+            url: `${BASE_URL}api/user`,
+            type: 'GET',
+            dataType: 'JSON',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: ({ data }) => {
+                $('.count_user').text(data.length)
+            },
+            error: err => {
+                const { error } = err.responseJSON
+                toastr.error(error, 'Gagal')
+            }
+        })
+    }
+
+    const fetchIklan = level => {
+        $.ajax({
+            url: `${BASE_URL}api/iklan`,
+            type: 'GET',
+            dataType: 'JSON',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: ({ data }) => {
+                $('.count_iklan').text(data.length)
+            },
+            error: err => {
+                const { error } = err.responseJSON
+                toastr.error(error, 'Gagal')
+            }
+        })
+    }
+
     return {
-        init: level => {
-            fetchSurvei(level)
-            fetchProperti(level)
-            fetchDeal(level)
-            fetchShowing(level)
-        }
+        advertising: () => {
+            let PROPERTI_CHART = new Chart(document.getElementById('propertiChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "green",
+                            "blue"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+            let IKLAN_CHART = new Chart(document.getElementById('iklanChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "green",
+                            "blue"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+            fetchProperti('Advertising', PROPERTI_CHART, IKLAN_CHART)
+            fetchIklan('Advertising')
+        },
+        agen: () => {
+
+            let CALENDAR = $('#showing_calendar').fullCalendar({
+                header: {
+                    left: 'title',
+                    right: 'prev,today,next,month,basicWeek,basicDay'
+                },
+                themeButtonIcons: {
+                    prev: 'fa fa-caret-left',
+                    next: 'fa fa-caret-right',
+                },
+                defaultDate: moment().format("YYYY-MM-DD"),
+                editable: false,
+                eventLimit: true,
+                droppable: false,
+                events: {
+                    url: `${BASE_URL}api/showing`,
+                    beforeSend: xhr => {
+                        xhr.setRequestHeader("X-API-KEY", TOKEN)
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+                    },
+                    error: function () {
+                        const { error } = err.responseJSON
+                        toastr.error(error, 'Gagal')
+                    },
+                    success: function (response) {
+                        var events_array = [];
+
+                        $.each(response.data, function (k, v) {
+                            var obj = {
+                                title: v.nama_klien,
+                                start: `${v.tgl_showing} ${v.jam_showing}`,
+                                className: 'bg-info'
+                            };
+                            events_array.push(obj);
+                        });
+
+
+                        return events_array;
+                    }
+                }
+            });
+
+            let SURVEI_CHART = new Chart(document.getElementById('surveiChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "blue",
+                            "green",
+                            "red"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+            let PROPERTI_CHART = new Chart(document.getElementById('propertiChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "green",
+                            "blue"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+
+            fetchSurvei('Agen', SURVEI_CHART)
+            fetchProperti('Agen', PROPERTI_CHART)
+            fetchShowing('Agen')
+            fetchDeal('Agen')
+        },
+        cs: () => {
+
+            let PROPERTI_CHART = new Chart(document.getElementById('propertiChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "green",
+                            "blue"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+            let CALENDAR = $('#showing_calendar').fullCalendar({
+                header: {
+                    left: 'title',
+                    right: 'prev,today,next,month,basicWeek,basicDay'
+                },
+                themeButtonIcons: {
+                    prev: 'fa fa-caret-left',
+                    next: 'fa fa-caret-right',
+                },
+                defaultDate: moment().format("YYYY-MM-DD"),
+                editable: false,
+                eventLimit: true,
+                droppable: false,
+                events: {
+                    url: `${BASE_URL}api/showing`,
+                    beforeSend: xhr => {
+                        xhr.setRequestHeader("X-API-KEY", TOKEN)
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+                    },
+                    error: function () {
+                        const { error } = err.responseJSON
+                        toastr.error(error, 'Gagal')
+                    },
+                    success: function (response) {
+                        var events_array = [];
+
+                        $.each(response.data, function (k, v) {
+                            var obj = {
+                                title: v.nama_klien,
+                                start: `${v.tgl_showing} ${v.jam_showing}`,
+                                className: 'bg-info'
+                            };
+                            events_array.push(obj);
+                        });
+
+
+                        return events_array;
+                    }
+                }
+            });
+
+            fetchProperti('Cs', PROPERTI_CHART)
+            fetchShowing('Cs')
+        },
+        manager: () => {
+            let PROPERTI_CHART = new Chart(document.getElementById('propertiChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "green",
+                            "blue"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+            let SURVEI_CHART = new Chart(document.getElementById('surveiChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "blue",
+                            "green",
+                            "red"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+            let CALENDAR = $('#showing_calendar').fullCalendar({
+                header: {
+                    left: 'title',
+                    right: 'prev,today,next,month,basicWeek,basicDay'
+                },
+                themeButtonIcons: {
+                    prev: 'fa fa-caret-left',
+                    next: 'fa fa-caret-right',
+                },
+                defaultDate: moment().format("YYYY-MM-DD"),
+                editable: false,
+                eventLimit: true,
+                droppable: false,
+                events: {
+                    url: `${BASE_URL}api/showing`,
+                    beforeSend: xhr => {
+                        xhr.setRequestHeader("X-API-KEY", TOKEN)
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+                    },
+                    error: function () {
+                        const { error } = err.responseJSON
+                        toastr.error(error, 'Gagal')
+                    },
+                    success: function (response) {
+                        var events_array = [];
+
+                        $.each(response.data, function (k, v) {
+                            var obj = {
+                                title: v.nama_klien,
+                                start: `${v.tgl_showing} ${v.jam_showing}`,
+                                className: 'bg-info'
+                            };
+                            events_array.push(obj);
+                        });
+
+
+                        return events_array;
+                    }
+                }
+            });
+
+            fetchSurvei('Manager', SURVEI_CHART)
+            fetchProperti('Manager', PROPERTI_CHART)
+            fetchIklan('Manager')
+            fetchShowing('Manager')
+            fetchDeal('Manager')
+            fetchUser('Manager')
+        },
+        telemarketing: () => {
+
+            let SURVEI_CHART = new Chart(document.getElementById('surveiChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "blue",
+                            "green",
+                            "red"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+            let PROPERTI_CHART = new Chart(document.getElementById('propertiChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            "green",
+                            "blue"
+                        ]
+                    }],
+                },
+
+                options: {
+                    legend: {
+                        display: true,
+                    },
+                    responsive: true,
+                    tooltips: {
+                        enabled: true,
+                    }
+                }
+            });
+
+            fetchSurvei('Telemarketing', SURVEI_CHART)
+            fetchProperti('Telemarketing', PROPERTI_CHART)
+        },
     }
 })(librarySetting);
 
@@ -1258,6 +1701,17 @@ const propertiController = ((Set, UI) => {
                 submitBatal(obj, level);
             }
         });
+
+        $('.detail-container').on('click', '#btn_print', function () {
+            var mode = 'iframe'; //popup
+            var close = mode == "popup";
+            var options = {
+                mode: mode,
+                popClose: close
+            };
+
+            $('.invoice').printArea(options);
+        })
     }
 
     return {
@@ -1329,8 +1783,8 @@ const propertiController = ((Set, UI) => {
                         render: (data, type, row) => {
                             if(row.iklan !== null){
                                 return `
-                                    <span class="label label-success">${row.iklan.kd_iklan}</span>
-                                    ${row.iklan.kd_lainnya === null ? '' : `<span class="label label-success">${row.iklan.kd_lainnya}</span>`}
+                                    <span class="label label-info">${row.iklan.kd_iklan}</span>
+                                    ${row.iklan.kd_lainnya === null ? '' : `<span class="label label-info">${row.iklan.kd_lainnya}</span>`}
                                 `
                             } else {
                                 return 'Iklan belum tersedia'
@@ -2096,3 +2550,56 @@ const dealController = ((Set, UI) => {
         }
     }
 })(librarySetting, dealUI)
+
+const reportController = ((Set, UI) => {
+
+    const initializePlugin = () => {
+        $('#report_container').on('click', '#btn_print', function () {
+            var mode = 'iframe'; //popup
+            var close = mode == "popup";
+            var options = {
+                mode: mode,
+                popClose: close
+            };
+
+            $('#print_area').printArea(options);
+        })
+    }
+
+    const submitLaporan = () => {
+        $('#form_report').on('submit', function(e){
+            e.preventDefault()
+        }).validate({
+            rules: {
+                bulan: 'required',
+                tahun: 'required'
+            },
+            submitHandler: form => {
+                $.ajax({
+                    url: `${BASE_URL}api/deal/report`,
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: $(form).serialize(),
+                    beforeSend: xhr => {
+                        xhr.setRequestHeader("X-API-KEY", TOKEN)
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+
+                        $('#report_container').html('<div class="text-center"><h4>Loading...</h4></div>')
+                    },
+                    success: res => {
+                        UI.renderLaporanView(res.data, res.periode, initializePlugin)
+                    },
+                    error: err => {
+                        toastr.error(err.error, 'Gagal')
+                    },
+                })
+            }
+        })
+    }
+
+    return {
+        init: () => {
+            submitLaporan();
+        }
+    }
+})(librarySetting, reportUI)

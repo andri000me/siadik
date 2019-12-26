@@ -22,6 +22,8 @@
 		<link rel="stylesheet" href="<?= base_url() ?>assets/vendor/bootstrap-datepicker/css/datepicker3.css" />
 		<link rel="stylesheet" href="<?= base_url() ?>assets/vendor/bootstrap-timepicker/css/bootstrap-timepicker.css" />
 		<link rel="stylesheet" href="<?= base_url() ?>assets/vendor/datatable/datatables.css" />
+		<link rel="stylesheet" href="<?= base_url() ?>assets/vendor/fullcalendar/fullcalendar.css" />
+		<link rel="stylesheet" href="<?= base_url() ?>assets/vendor/fullcalendar/fullcalendar.print.css" media="print" />
 		
 		<link rel="stylesheet" href="<?= base_url() ?>assets/vendor/loaders/loaders.min.css" />
         <link rel="stylesheet" href="<?= base_url() ?>assets/vendor/toastr/build/toastr.min.css" />
@@ -195,6 +197,9 @@
 		<script src="<?= base_url() ?>assets/vendor/select2/dist/js/select2.js"></script>
 		<script src="<?= base_url() ?>assets/vendor/datatable/datatables.js"></script>
 		<script src="<?= base_url() ?>assets/vendor/chart.js/chart.min.js"></script>
+		<script src="<?= base_url() ?>assets/vendor/printarea/jquery.PrintArea.js"></script>
+		<script src="<?= base_url() ?>assets/vendor/fullcalendar/lib/moment.min.js"></script>
+		<script src="<?= base_url() ?>assets/vendor/fullcalendar/fullcalendar.js"></script>
 
 		<script src="<?= base_url() ?>assets/vendor/jquery-validation/jquery.validate.js"></script>
         <script src="<?= base_url() ?>assets/vendor/block-ui/jquery.blockUI.js"></script>

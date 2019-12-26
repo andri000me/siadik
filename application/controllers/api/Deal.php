@@ -242,6 +242,67 @@ class Deal extends CI_Controller {
         } 
     }
 
+    public function report_post()
+    {
+        if(!$this->auth){
+            $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
+        } else {
+           $otorisasi  = $this->auth;
+
+            $config = array(
+                array(
+                    'field' => 'bulan',
+                    'label' => 'Bulan',
+                    'rules' => 'required|trim'
+                ),
+                array(
+                    'field' => 'tahun',
+                    'label' => 'Tahun',
+                    'rules' => 'required|trim'
+                ),
+            );
+
+            $this->form_validation->set_data($this->post());
+            $this->form_validation->set_rules($config);
+
+            if(!$this->form_validation->run()){
+                $this->response(['status' => false, 'error' => $this->form_validation->error_array()], 400);
+            } else {
+
+                $where = array(
+                    'MONTH(tgl_deal)'  => $this->post('bulan'),
+                    'YEAR(tgl_deal)'   => $this->post('tahun')
+                );
+
+                $deal   = $this->DealModel->fetch($where);
+                $data   = array();
+
+                if($deal->num_rows() === 0){
+                    $this->response(['status' => false, 'message' => 'Report tidak ditemukan', 'data' => []], 200);
+                } else {
+                    foreach($deal->result() as $key){
+                        $json = array();
+
+                        $json['kd_booking'] = $key->kd_booking;
+                        $json['properti'] = $this->PropertiModel->hasOne(['kd_properti' => $key->kd_properti]);
+                        $json['agen'] = $this->UserModel->hasOne(['id_user' => $key->agen]);
+                        $json['tgl_deal'] = $key->tgl_deal;
+                        $json['keterangan'] = $key->keterangan;
+                        $json['timestamps'] = array(
+                            'created_at' => $key->created_at,
+                            'updated_at' => $key->updated_at,
+                        );
+
+                        $data[] = $json;
+                    }
+
+                    $this->response(['status' => true, 'message' => 'Berhasil menampilkan report', 'data' => $data, 'periode' => ['bulan' =>  $this->post('bulan'), 'tahun' => $this->post('tahun')]], 200);
+                } 
+            }
+            
+        }
+    }
+
     public function delete_foto($name, $id){
         $files = glob('doc/deal/'.$name.'/'.$id.'.*');
         foreach ($files as $key) {

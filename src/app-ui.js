@@ -357,10 +357,11 @@ const propertiUI = (() => {
         switch (level) {
             case 'Telemarketing':
                 if (data.iklan !== null) {
-                    action = `<h5 class="text-center">Tidak tersedia</h5>`
+                    action = `<button class="btn btn-md btn-block btn-primary" id="btn_print">Print</button>`
                 } else {
                     action = `
                         <a class="btn btn-md btn-block btn-success" href="#/properti/edit/${data.kd_properti}">Edit</a>
+                        <button class="btn btn-md btn-block btn-primary" id="btn_print">Print</button>
                         <button class="btn btn-md btn-block btn-danger" id="btn_delete" data-placement="bottom" data-id="${data.kd_properti}">Hapus</button>
                     `
                 }
@@ -368,7 +369,7 @@ const propertiUI = (() => {
 
             case 'Advertising':
                 if (data.iklan !== null) {
-                    action = `<h5 class="text-center">Tidak tersedia</h5>`
+                    action = `<button class="btn btn-md btn-block btn-primary" id="btn_print">Print</button>`
                 } else {
                     action = `
                         <form id="form_iklan">
@@ -390,7 +391,7 @@ const propertiUI = (() => {
                 break;
 
             default:
-                action = `<h5 class="text-center">Tidak tersedia</h5>`
+                action = `<button class="btn btn-md btn-block btn-primary" id="btn_print">Print</button>`
         }
 
         return action;
@@ -554,7 +555,7 @@ const propertiUI = (() => {
                                         <header class="clearfix">
                                             <div class="row">
                                                 <div class="col-sm-6 mt-md">
-                                                    <h2 class="h2 mt-none mb-sm text-dark text-weight-bold">Kode Properti</h2>
+                                                    <h4 class="h4 mt-none mb-sm text-dark text-weight-bold">Kode Properti</h4>
                                                     <h4 class="h4 m-none text-dark text-weight-bold">${data.kd_properti}</h4>
                                                 </div>
                                                 <div class="col-sm-6 text-right mt-md mb-md">
@@ -651,56 +652,58 @@ const propertiUI = (() => {
                                             <br/>
 
                                             <h5>Spesifikasi :</h5>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <table style="width: 100%">
-                                                        <tr>
-                                                            <td style="width: 50%">Kamar Tidur</td>
-                                                            <td style="border-bottom: 1px solid black">${data.kamar}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="width: 50%">Listrik</td>
-                                                            <td style="border-bottom: 1px solid black">${data.listrik}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="width: 50%">Jumlah Lantai</td>
-                                                            <td style="border-bottom: 1px solid black">${data.lantai}</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <table style="width: 100%">
-                                                        <tr>
-                                                            <td style="width: 50%">Kamar Mandi</td>
-                                                            <td style="border-bottom: 1px solid black">${data.kamar_mandi}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="width: 50%">Air</td>
-                                                            <td style="border-bottom: 1px solid black">${data.air}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="width: 50%">Jenis Lantai</td>
-                                                            <td style="border-bottom: 1px solid black">${data.jenis_lantai}</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <table style="width: 100%">
-                                                        <tr>
-                                                            <td style="width: 50%">Garasi</td>
-                                                            <td style="border-bottom: 1px solid black">${data.garasi}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="width: 50%">Telp</td>
-                                                            <td style="border-bottom: 1px solid black">${data.line_tlp}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="width: 50%">Tahun</td>
-                                                            <td style="border-bottom: 1px solid black">${data.tahun}</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                            <table style="width: 100%">
+                                                <tr>
+                                                    <td style="width: 33%; padding: 8px;">
+                                                        <table style="width: 100%">
+                                                            <tr>
+                                                                <td style="width: 50%">Kamar Tidur</td>
+                                                                <td style="border-bottom: 1px solid black">${data.kamar}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 50%;">Listrik</td>
+                                                                <td style="border-bottom: 1px solid black">${data.listrik}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 50%">Jumlah Lantai</td>
+                                                                <td style="border-bottom: 1px solid black">${data.lantai}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>                                                
+                                                    <td style="width: 33%; padding: 8px;">
+                                                        <table style="width: 100%">
+                                                            <tr>
+                                                                <td style="width: 50%">Kamar Mandi</td>
+                                                                <td style="border-bottom: 1px solid black">${data.kamar_mandi}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 50%">Air</td>
+                                                                <td style="border-bottom: 1px solid black">${data.air}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 50%">Jenis Lantai</td>
+                                                                <td style="border-bottom: 1px solid black">${data.jenis_lantai}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>                                                
+                                                    <td style="width: 33%; padding: 8px;">
+                                                        <table style="width: 100%">
+                                                            <tr>
+                                                                <td style="width: 50%">Garasi</td>
+                                                                <td style="border-bottom: 1px solid black">${data.garasi}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 50%">Telp</td>
+                                                                <td style="border-bottom: 1px solid black">${data.line_tlp}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 50%">Tahun</td>
+                                                                <td style="border-bottom: 1px solid black">${data.tahun}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>                                                
+                                                </tr>                                            
+                                            </table>
 
                                             <table style="width: 100%">
                                                 <tr>
@@ -723,12 +726,12 @@ const propertiUI = (() => {
                                                 <tr>
                                                     <td style="width: 30%">Harga Penawaran</td>
                                                     <td style="width: 5%">:</td>
-                                                    <td style="border-bottom: 1px solid black">Rp. ${data.harga_penawaran}</td>
+                                                    <td style="border-bottom: 1px solid black">Rp. ${parseInt(data.harga_penawaran).toLocaleString(['ban', 'id'])}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 30%">Harga Bawah</td>
                                                     <td style="width: 5%">:</td>
-                                                    <td style="border-bottom: 1px solid black">Rp. ${parseInt(data.harga_penawaran) + (parseInt(data.harga_penawaran) * parseInt(data.komisi) / 100)}</td>
+                                                    <td style="border-bottom: 1px solid black">Rp. ${parseInt(parseInt(data.harga_penawaran) + (parseInt(data.harga_penawaran) * parseInt(data.komisi) / 100)).toLocaleString(['ban', 'id'])}</td>
                                                 </tr>
                                             </table>
                                             
@@ -736,6 +739,31 @@ const propertiUI = (() => {
 
                                             <h5>Jika PINRUMAH.com beserta seluruh kantor cabangnya berhasil Menjual atau Menyewakan properti tersebut, kami menyetujui untuk membayar jasa Pemasaran atau Komisi sebesar <b>${data.komisi} %</b> dari nilai Total Transaksi</h5>
                                         </div>
+
+                                        
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 50%" class="text-center">
+                                                    <div>Yang Memberi Persetujuan</div>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <div>( ..............................................................)</div>
+                                                </td>
+                                                <td style="width: 50%" class="text-center">
+                                                    <div>PINRUMAH.COM</div>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <div>( ..............................................................)</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+
 
                                     </div>
 
@@ -833,9 +861,9 @@ const propertiUI = (() => {
 										</div>
 									</div>
                                 </div>
-
                             </div>
                         </div>
+
                     </div>
                     <div class="col-md-4">
                         <section class="panel">
@@ -1080,6 +1108,106 @@ const dealUI = (() => {
             let html = `<h1 class="text-center">${err.error}</h1>`
 
             $('#edit-container, .detail-container').html(html);
+        }
+    }
+})()
+
+const reportUI = (() => {
+
+    return {
+        renderLaporanView: (data, periode, callback) => {
+            let html = '';
+            let total = 0;
+            let list_bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+
+            if(data.length === 0){
+                html += `
+                    <div class="text-center">
+                        <h4>Data tidak tersedia</h4>
+                    </div>
+                `
+            } else {
+                html += `
+                    <header class="panel-heading">
+                        <div class="panel-actions">
+                            <button class="btn btn-success" id="btn_print" style="margin-right: 10px;">
+                                <i class="fa fa-print"></i> Print
+                            </button>
+                        </div>
+                    </header>
+                    <div class="panel-body" id="print_area">
+                        <table>
+                            <tr>
+                                <td style="width: 100%">
+                                    <div class="text-right">
+                                        <img src="${BASE_URL}assets/images/logo.png" style="width: 50%" alt="OKLER Themes">
+                                        <h4>Jl. Petojo Viy I 30A, Cideng, Jakarta Pusat 10150</h4>
+                                        <h5>Telp. 021-6338080 Email. admin@pinrumah.com</h5>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <hr/>
+
+                        <h4>Laporan Penjualan Periode ${list_bulan[parseInt(periode.bulan) - 1]} ${periode.tahun}</h4>
+
+                        <table class="table table-bordered table-striped mb-none" style="font-size: 12px">
+                            <thead>
+                                <tr>
+                                    <th>Kode Booking</th>
+                                    <th>Kode Properti</th>
+                                    <th>Agen</th>
+                                    <th>Tanggal Penjualan</th>
+                                    <th>Harga Penawaran</th>
+                                    <th>Komisi</th>
+                                    <th>Harga Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.map(v => {
+                                    let total_harga = parseInt(v.properti.harga_penawaran) + (parseInt(v.properti.harga_penawaran) * parseInt(v.properti.komisi) / 100)
+                                    total += total_harga
+
+                                    return `
+                                        <tr>
+                                            <td>${v.kd_booking}</td>
+                                            <td>${v.properti.kd_properti}</td>
+                                            <td>${v.agen.nama_lengkap}</td>
+                                            <td>${v.tgl_deal}</td>
+                                            <td>Rp. ${parseInt(v.properti.harga_penawaran).toLocaleString(['ban', 'id'])}</td>
+                                            <td>${v.properti.komisi} %</td>
+                                            <td>Rp. ${parseInt(total_harga).toLocaleString(['ban', 'id'])}</td>
+                                        </tr>
+                                    `
+                                }).join('')}
+                            </tbody>
+                        </table>
+                        
+                        <br/>
+
+                        <table style="width: 100%">
+                            <tr>
+                                <td style="width: 50%">
+                                
+                                </td>
+                                <td style="width: 50%">
+                                    <table style="width: 100%">
+                                        <tr>
+                                            <td class="text-right">
+                                                <h5><b>Grand Total</b> Rp. ${parseInt(total).toLocaleString(['ban', 'id'])}</h5>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                `
+            }
+
+            $('#report_container').html(html)
+            callback()
         }
     }
 })()

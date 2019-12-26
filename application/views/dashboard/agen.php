@@ -101,9 +101,36 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-6">
+        <section class="panel panel-featured-left panel-featured-primary">
+            <div class="panel-body">
+                <h4>Surve Foto Chart</h4>
+                <canvas id="surveiChart" height="200"></canvas>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-6">
+        <section class="panel panel-featured-left panel-featured-danger">
+            <div class="panel-body">
+                <h4>Properti Chart</h4>
+                <canvas id="propertiChart" height="200"></canvas>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-12">
+        <section class="panel panel-featured-left panel-featured-tertiary">
+            <div class="panel-body">
+                <h4>Showing Calendar</h4>
+                <div id="showing_calendar"></div>
+            </div>
+        </section>
+    </div>
+</div>
+
 
 <script>
     $(function(){
-        dashboardController.init('<?= $this->session->userdata('level') ?>')
+        dashboardController.agen()
     })
 </script>

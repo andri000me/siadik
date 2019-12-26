@@ -61,7 +61,7 @@
                     <th>Telemarketing</th>
                     <th>Nama Pemilik</th>
                     <th>Alamat</th>
-                    <th>Kode Hos</th>
+                    <th>Kode Iklan</th>
                     <th>Status</th>
                     <th>Keterangan</th>
                 </tr>

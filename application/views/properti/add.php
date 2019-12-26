@@ -40,6 +40,7 @@
         <h2 class="panel-title">Form Properti</h2>
     </header>
     <div class="panel-body panel-body-nopadding">
+
         <div class="wizard-tabs">
             <ul class="wizard-steps">
                 <li class="active">
@@ -68,6 +69,7 @@
                 </li>
             </ul>
         </div>
+
         <form class="form-horizontal" id="form_add" novalidate="novalidate">
             <div class="tab-content">
 
@@ -351,7 +353,7 @@
                         <div class="col-md-6 col-xs-6">
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="w1-semi_furnish">Semi Furnish</label>
-                                <textarea class="col-sm-8">
+                                <div class="col-sm-8">
                                     <textarea class="form-control" name="semi_furnish" id="w1-semi_furnish"></textarea>
                                 </div>
                             </div>
@@ -394,6 +396,7 @@
                 </div>
             </div>
         </form>
+        
     </div>
     <div class="panel-footer">
         <ul class="pager">
