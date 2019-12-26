@@ -36,7 +36,8 @@ class Iklan extends CI_Controller {
                 foreach($iklan->result() as $key){
                     $json = array();
 
-                    $json['kd_hos'] = $key->kd_hos;
+                    $json['kd_iklan'] = $key->kd_iklan;
+                    $json['kd_lainnya'] = $key->kd_lainnya;
                     $json['advertising'] = $this->UserModel->hasOne(['id_user' => $key->advertising]);
                     $json['properti'] = $this->PropertiModel->hasOne(['kd_properti' => $key->kd_properti]);
                     $json['keterangan'] = $key->keterangan;
@@ -67,7 +68,8 @@ class Iklan extends CI_Controller {
             } else {
                 $json = array();
 
-                $json['kd_hos'] = $iklan->kd_hos;
+                $json['kd_iklan'] = $iklan->kd_iklan;
+                $json['kd_lainnya'] = $iklan->kd_lainnya;
                 $json['telemarketing'] = $this->UserModel->hasOne(['id_user' => $iklan->telemarketing]);
                 $json['properti'] = $this->PropertiModel->hasOne(['kd_properti' => $iklan->kd_properti]);
                 $json['keterangan'] = $iklan->keterangan;
@@ -92,10 +94,15 @@ class Iklan extends CI_Controller {
 
             $config = array(
                 array(
+                    'field' => 'kd_iklan',
+                    'label' => 'Kode Iklan',
+                    'rules' => 'required|trim|is_unique[iklan.kd_iklan]'
+                ),
+                array(
                     'field' => 'kd_properti',
                     'label' => 'Kode Properti',
                     'rules' => 'required|trim|callback_cek_properti'
-                )
+                ),
             );
 
             $this->form_validation->set_data($this->post());
@@ -104,11 +111,10 @@ class Iklan extends CI_Controller {
             if(!$this->form_validation->run()){
                 $this->response(['status' => false, 'error' => $this->form_validation->error_array()], 400);
             } else {
-                $kd_hos = $this->KodeModel->buat_kode('iklan', 'HOS-'.date('mY').'-', 'kd_hos', 3);
-
                 $data = array(
-                    'kd_hos' => $kd_hos,
+                    'kd_iklan' => $this->post('kd_iklan'),
                     'kd_properti' => $this->post('kd_properti'),
+                    'kd_lainnya' => $this->post('kd_lainnya'),
                     'advertising' => $otorisasi->id_user,
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
@@ -119,7 +125,7 @@ class Iklan extends CI_Controller {
                 if(!$add){
                     $this->response(['status' => false, 'message' => 'Gagal menambahkan iklan'], 500);
                 } else {
-                    $this->response(['status' => true, 'message' => 'Berhasil menambahkan iklan', 'input_id' => $kd_hos], 200);
+                    $this->response(['status' => true, 'message' => 'Berhasil menambahkan iklan', 'input_id' => $this->post('kd_properti')], 200);
                 }
             }
         } 
@@ -132,16 +138,17 @@ class Iklan extends CI_Controller {
         } else {
             $otorisasi  = $this->auth;
 
-            $iklan = $this->IklanModel->detail(['kd_hos' => $id])->row();
+            $iklan = $this->IklanModel->detail(['kd_iklan' => $id])->row();
 
             if(!$iklan){
                 $this->response(['status' => false, 'error' => 'Iklan tidak ditemukan'], 404);
             } else {
                 $where  = array(
-                    'kd_hos'   => $iklan->kd_hos 
+                    'kd_iklan'   => $iklan->kd_iklan 
                 );
 
                 $data = array(
+                    'kd_lainnya' => $this->put('kd_lainnya'),
                     'keterangan' => $this->put('keterangan'),
                     'updated_at' => date('Y-m-d H:i:s')
                 );
@@ -151,7 +158,7 @@ class Iklan extends CI_Controller {
                 if(!$edit){
                     $this->response(['status' => false, 'message' => 'Gagal mengedit iklan'], 500);
                 } else {
-                    $this->response(['status' => true, 'message' => 'Berhasil mengedit iklan', 'update_id' => $iklan->kd_hos], 200);
+                    $this->response(['status' => true, 'message' => 'Berhasil mengedit iklan', 'update_id' => $iklan->kd_iklan], 200);
                 }
             }
         } 
@@ -163,13 +170,13 @@ class Iklan extends CI_Controller {
             $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
         } else {
 
-            $iklan = $this->IklanModel->detail(['kd_hos' => $id])->row();
+            $iklan = $this->IklanModel->detail(['kd_iklan' => $id])->row();
 
             if(!$iklan){
                  $this->response(['status' => false, 'error' => 'Iklan tidak ditemukan'], 404);
             } else {
                 $where  = array(
-                    'kd_hos'   => $iklan->kd_hos 
+                    'kd_iklan'   => $iklan->kd_iklan 
                 );
 
                 $delete = $this->IklanModel->delete($where);

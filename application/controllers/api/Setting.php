@@ -17,42 +17,10 @@ class Setting extends CI_Controller {
         parent::__construct();
         $this->__resTraitConstruct();
 
-        $this->token    = $this->input->get_request_header('X-SIADIK-KEY', TRUE);
+        $this->token    = $this->input->get_request_header('X-API-KEY', TRUE);
         $this->auth     = AUTHORIZATION::validateToken($this->token);
 
         $this->load->model('AuthModel');
-    }
-
-    public function verify_user_get()
-    {
-        if(!$this->auth){
-            $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
-        } else {
-            $where  = array('id_user' => $this->auth->id_user);
-            $user   = $this->AuthModel->cekAuth($where);
-
-            if($user->num_rows() == 0){
-                $this->response(['status' => false, 'error' => 'User tidak ditemukan'], 400);
-            } else {
-                $auth = $user->row();
-
-                $payload = array(
-                    'id_user' => $auth->id_user,
-                    'nama_lengkap' => $auth->nama_lengkap,
-                    'jenis_kelamin' => $auth->jenis_kelamin,
-                    'tgl_lahir' => $auth->tgl_lahir,
-                    'alamat' => $auth->alamat,
-                    'telepon' => $auth->telepon,
-                    'email' => $auth->email,
-                    'username' => $auth->username,
-                    'level' => strtolower($auth->level),
-                    'aktif' => $auth->aktif,
-                    'tgl_registrasi' => $auth->tgl_registrasi
-                );
-
-                $this->response(['status' => true, 'message' => 'Berhasil verifikasi user', 'data' => $payload], 200);
-            }
-        }
     }
 
     public function change_password_put()
@@ -94,9 +62,9 @@ class Setting extends CI_Controller {
                 } else {
                     $user = $fetch->row();
 
-                    if(hash_equals(sha1($this->put('old_password')), $user->password)){
+                    if(hash_equals($this->put('old_password'), $user->password)){
                         $data   = array(
-                            'password' => sha1($this->put('new_password'))
+                            'password' => $this->put('new_password')
                         );
 
                         $update = $this->AuthModel->updateAuth($where, $data);
@@ -114,68 +82,35 @@ class Setting extends CI_Controller {
         }
     }
 
-    public function edit_profile_put()
+    public function profile_get()
     {
         if(!$this->auth){
             $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
         } else {
             $otorisasi = $this->auth;
-
-            $config = array(
-                array(
-                    'field' => 'nama_lengkap',
-                    'label' => 'Nama Lengkap',
-                    'rules' => 'required|trim'
-                ),
-                array(
-                    'field' => 'jenis_kelamin',
-                    'label' => 'Jenis Kelamin',
-                    'rules' => 'required|trim'
-                ),
-                array(
-                    'field' => 'tgl_lahir',
-                    'label' => 'Tanggal Lahir',
-                    'rules' => 'required|trim'
-                ),
-                array(
-                    'field' => 'alamat',
-                    'label' => 'Alamat',
-                    'rules' => 'required|trim'
-                ),
-                array(
-                    'field' => 'telepon',
-                    'label' => 'Telepon',
-                    'rules' => 'required|trim'
-                ),
-            );
         
-            $this->form_validation->set_data($this->put());
-            $this->form_validation->set_rules($config);
+            $where  = array('id_user' => $otorisasi->id_user);
+            $profile  = $this->UserModel->detail($where)->row();
 
-            if(!$this->form_validation->run()){
-                $this->response(['status' => false, 'error' => $this->form_validation->error_array()], 400);
-            }else{
-                $where  = array('id_user' => $otorisasi->id_user);
+            if(!$profile){
+                $this->response(['status' => false, 'error' => 'User tidak ditemukan'], 400);
+            } else {
+                $json = array();
 
-                $data   = array(
-                    'nama_lengkap' => $this->put('nama_lengkap'),
-                    'jenis_kelamin' => $this->put('jenis_kelamin'),
-                    'tgl_lahir' => $this->put('tgl_lahir'),
-                    'alamat' => $this->put('alamat'),
-                    'telepon' => $this->put('telepon')
+                $json['id_user'] = $profile->id_user;
+                $json['nama_lengkap'] = $profile->nama_lengkap;
+                $json['telepon'] = $profile->telepon;
+                $json['aktif'] = $profile->aktif;
+                $json['level'] = $profile->level;
+                $json['timestamps'] = array(
+                    'created_at' => $profile->created_at,
+                    'updated_at' => $profile->updated_at,
                 );
 
-                $update = $this->AuthModel->updateAuth($where, $data);
+                $data = $json;
 
-                if(!$update){
-                    $this->response(array('status' => false, 'error' => 'Gagal mengedit profile'), 500);
-                } else {
-                    $this->response(array('status' => true, 'message' => 'Berhasil mengedit profile'), 200);
-                }
+                $this->response(['status' => true, 'message' => 'Berhasil menampilkan profile', 'data' => $data], 200);
             }
         }
     }
-
-    
-
 }

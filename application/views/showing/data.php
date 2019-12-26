@@ -14,51 +14,15 @@
 </header>
 
 <div class="row">
-    <div class="col-md-3">
-        <section class="panel">
-            <div class="panel-body">
-                <div class="small-chart pull-right">
-                    <i class="fa fa-times fa-4x text-danger"></i>
-                </div>
-
-                <div class="h4 text-weight-bold mb-none" id="count_batal">...</div>
-                <p class="text-xs text-muted mb-none">Total Batal</p>
-            </div>
-        </section>
-    </div>
-    <div class="col-md-3">
-        <section class="panel">
-            <div class="panel-body">
-                <div class="small-chart pull-right">
-                    <i class="fa fa-refresh fa-4x text-primary"></i>
-                </div>
-
-                <div class="h4 text-weight-bold mb-none" id="count_proses">...</div>
-                <p class="text-xs text-muted mb-none">Total Proses</p>
-            </div>
-        </section>
-    </div>
-    <div class="col-md-3">
-        <section class="panel">
-            <div class="panel-body">
-                <div class="small-chart pull-right">
-                    <i class="fa fa-clock-o fa-4x text-warning"></i>
-                </div>
-
-                <div class="h4 text-weight-bold mb-none" id="count_limit">...</div>
-                <p class="text-xs text-muted mb-none">Total Lewat Waktu</p>
-            </div>
-        </section>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-6">
         <section class="panel">
             <div class="panel-body">
                 <div class="small-chart pull-right">
                     <i class="fa fa-check fa-4x text-success"></i>
                 </div>
 
-                <div class="h4 text-weight-bold mb-none" id="count_selesai">...</div>
-                <p class="text-xs text-muted mb-none">Total Selesai</p>
+                <div class="h4 text-weight-bold mb-none" id="count_showing">...</div>
+                <p class="text-xs text-muted mb-none">Total Showing</p>
             </div>
         </section>
     </div>
@@ -84,8 +48,8 @@
                     <th>Kode Showing</th>
                     <th>Kode Properti</th>
                     <th>Klien</th>
+                    <th>Agen</th>
                     <th>Tanggal/Jam</th>
-                    <th>Status</th>
                     <th>Keterangan</th>
                 </tr>
             </thead>

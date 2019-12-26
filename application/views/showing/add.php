@@ -37,8 +37,9 @@
             <div class="form-group">
                 <label class="col-md-3 control-label" for="agen">Agen</label>
                 <div class="col-md-6">
-                    <input type="hidden" readonly id="agen" name="agen" class="form-control">
-                    <input type="text" readonly id="agen_name" name="agen_name" class="form-control">
+                    <select name="agen" id="agen" class="form-control">
+                        <option value="" disabled selected></option>
+                    </select>
                 </div>
             </div>
 

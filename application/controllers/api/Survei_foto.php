@@ -26,7 +26,14 @@ class Survei_foto extends CI_Controller {
             $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
         } else {
             $otorisasi  = $this->auth;
-            $survei   = $this->SurveiFotoModel->fetch();
+
+            if($otorisasi->level === 'agen'){
+                $where = ['agen' => $otorisasi->id_user];
+            } else {
+                $where = [];
+            }
+
+            $survei   = $this->SurveiFotoModel->fetch($where);
             $data   = array();
 
             if($survei->num_rows() === 0){

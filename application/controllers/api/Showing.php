@@ -27,7 +27,14 @@ class Showing extends CI_Controller {
             $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
         } else {
             $otorisasi  = $this->auth;
-            $showing   = $this->ShowingModel->fetch();
+
+            if($otorisasi->level === 'agen'){
+                $where = ['agen' => $otorisasi->id_user];
+            } else {
+                $where = [];
+            }
+
+            $showing   = $this->ShowingModel->fetch($where);
             $data   = array();
 
             if($showing->num_rows() === 0){
@@ -44,23 +51,6 @@ class Showing extends CI_Controller {
                     $json['tlp_klien'] = $key->tlp_klien;
                     $json['tgl_showing'] = $key->tgl_showing;
                     $json['jam_showing'] = $key->jam_showing;
-                    
-                    if($key->status === 'Proses'){
-                        $now = new DateTime();
-                        $datetime = new DateTime($key->tgl_showing.' '.$key->jam_showing);
-
-                        $diff = $now->diff($datetime)->d;
-
-                        if($diff < 0){
-                            $status = 'Limit';
-                        } else {
-                            $status = 'Proses';
-                        }
-                    } else {
-                        $status = $key->status;
-                    }
-                    
-                    $json['status'] = $status;
                     $json['keterangan'] = $key->keterangan;
                     $json['timestamps'] = array(
                         'created_at' => $key->created_at,
@@ -81,21 +71,26 @@ class Showing extends CI_Controller {
             $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
         } else {
             $otorisasi  = $this->auth;
-            $where = ['kd_foto' => $id];
-            $iklan   = $this->IklanModel->detail($where)->row();
+            $where = ['kd_showing' => $id];
+            $showing   = $this->ShowingModel->detail($where)->row();
 
-            if(!$iklan){
-                $this->response(['status' => false, 'error' => 'Iklan tidak ditemukan'], 404);
+            if(!$showing){
+                $this->response(['status' => false, 'error' => 'Showing tidak ditemukan'], 404);
             } else {
                 $json = array();
 
-                $json['kd_hos'] = $iklan->kd_hos;
-                $json['telemarketing'] = $this->UserModel->hasOne(['id_user' => $iklan->telemarketing]);
-                $json['properti'] = $this->PropertiModel->hasOne(['kd_properti' => $iklan->kd_properti]);
-                $json['keterangan'] = $iklan->keterangan;
+                $json['kd_showing'] = $showing->kd_showing;
+                $json['properti'] = $this->PropertiModel->hasOne(['kd_properti' => $showing->kd_properti]);
+                $json['cs'] = $this->UserModel->hasOne(['id_user' => $showing->cs]);
+                $json['agen'] = $this->UserModel->hasOne(['id_user' => $showing->agen]);
+                $json['nama_klien'] = $showing->nama_klien;
+                $json['tlp_klien'] = $showing->tlp_klien;
+                $json['tgl_showing'] = $showing->tgl_showing;
+                $json['jam_showing'] = $showing->jam_showing;
+                $json['keterangan'] = $showing->keterangan;
                 $json['timestamps'] = array(
-                    'created_at' => $iklan->created_at,
-                    'updated_at' => $iklan->updated_at,
+                    'created_at' => $showing->created_at,
+                    'updated_at' => $showing->updated_at,
                 );
 
                 $data = $json;
@@ -162,7 +157,6 @@ class Showing extends CI_Controller {
                     'tlp_klien' => $this->post('tlp_klien'),
                     'tgl_showing' => date("Y-m-d", strtotime($this->post('tgl_showing'))),
                     'jam_showing' => $this->post('jam_showing'),
-                    'status' => 'Proses',
                     'keterangan' => $this->post('keterangan'),
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
@@ -217,21 +211,21 @@ class Showing extends CI_Controller {
             $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
         } else {
 
-            $iklan = $this->IklanModel->detail(['kd_hos' => $id])->row();
+            $showing = $this->ShowingModel->detail(['kd_showing' => $id])->row();
 
-            if(!$iklan){
-                 $this->response(['status' => false, 'error' => 'Iklan tidak ditemukan'], 404);
+            if(!$showing){
+                 $this->response(['status' => false, 'error' => 'Showing tidak ditemukan'], 404);
             } else {
                 $where  = array(
-                    'kd_hos'   => $iklan->kd_hos 
+                    'kd_showing'   => $showing->kd_showing 
                 );
 
-                $delete = $this->IklanModel->delete($where);
+                $delete = $this->ShowingModel->delete($where);
 
                 if(!$delete){
-                    $this->response(['status' => false, 'message' => 'Gagal menghapus iklan'], 500);
+                    $this->response(['status' => false, 'message' => 'Gagal menghapus showing'], 500);
                 } else {
-                    $this->response(['status' => true, 'message' => 'Berhasil menghapus iklan'], 200);
+                    $this->response(['status' => true, 'message' => 'Berhasil menghapus showing'], 200);
                 }
             }
         } 

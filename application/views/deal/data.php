@@ -14,7 +14,7 @@
 </header>
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6">
         <section class="panel">
             <div class="panel-body">
                 <div class="small-chart pull-right">
@@ -47,6 +47,7 @@
                 <tr>
                     <th>Kode Booking</th>
                     <th>Kode Properti</th>
+                    <th>Agen</th>
                     <th>Tgl Deal</th>
                     <th>Keterangan</th>
                 </tr>

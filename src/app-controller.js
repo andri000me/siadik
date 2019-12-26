@@ -16,6 +16,94 @@ toastr.options = {
     "hideMethod": "slideUp"
 }
 
+const dashboardController = ((Set) => {
+
+    const fetchSurvei = level => {
+        $.ajax({
+            url: `${BASE_URL}api/survei_foto`,
+            type: 'GET',
+            dataType: 'JSON',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: ({ data }) => {
+                $('.count_survei').text(data.length)
+            },
+            error: err => {
+                const { error } = err.responseJSON
+                toastr.error(error, 'Gagal')
+            }
+        })
+    }
+
+    const fetchProperti = (level, CHART) => {
+        $.ajax({
+            url: `${BASE_URL}api/properti`,
+            type: 'GET',
+            dataType: 'JSON',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: ({ data }) => {
+                $('.count_properti').text(data.length)
+            },
+            error: err => {
+                const { error } = err.responseJSON
+                toastr.error(error, 'Gagal')
+            }
+        })
+    }
+
+    const fetchDeal = level => {
+        $.ajax({
+            url: `${BASE_URL}api/deal`,
+            type: 'GET',
+            dataType: 'JSON',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: ({ data }) => {
+                $('.count_deal').text(data.length)
+            },
+            error: err => {
+                const { error } = err.responseJSON
+                toastr.error(error, 'Gagal')
+            }
+        })
+    }
+
+    const fetchShowing = level => {
+        $.ajax({
+            url: `${BASE_URL}api/showing`,
+            type: 'GET',
+            dataType: 'JSON',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: ({ data }) => {
+                $('.count_showing').text(data.length)
+            },
+            error: err => {
+                const { error } = err.responseJSON
+                toastr.error(error, 'Gagal')
+            }
+        })
+    }
+
+    return {
+        init: level => {
+            fetchSurvei(level)
+            fetchProperti(level)
+            fetchDeal(level)
+            fetchShowing(level)
+        }
+    }
+})(librarySetting);
+
 const authController = ((Set) => {
 
     const setSession = (data) => {
@@ -98,7 +186,7 @@ const authController = ((Set) => {
     }
 })(librarySetting);
 
-const mainController = ((Set) => {
+const mainController = ((Set, UI) => {
 
     const loadContent = path => {
         $.ajax({
@@ -166,14 +254,82 @@ const mainController = ((Set) => {
         })
     }
 
+    const openProfile = () => {{
+        $('#setting-profile').on('click', function(){
+            $.ajax({
+                url: `${BASE_URL}api/setting/profile`,
+                type: 'GET',
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-API-KEY", TOKEN)
+                    xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+                },
+                success: ({data}) => {
+                    UI.renderProfile(data)
+                },
+                error: err => {
+                    toastr.error('Tidak dapat mengakses server', 'Gagal')
+                }
+            })
+
+            $('#modal_profile').modal('show')
+        })
+    }}
+
+    const openPassword = () => {
+        $('#setting-password').on('click', function(){
+            $('.form_password')[0].reset()
+            $('#modal_password').modal('show')
+        })
+    }
+
+    const submitPassword = () => {
+        $('.form_password').on('submit', function(e){
+            e.preventDefault()
+        }).validate({
+            rules: {
+                old_password: 'required',
+                new_password: 'required',
+                retype_password: 'required'
+            },
+            submitHandler: form => {
+                $.ajax({
+                    url: `${BASE_URL}api/setting/change_password`,
+                    type: 'PUT',
+                    data: $(form).serialize(),
+                    dataType: 'JSON',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("X-API-KEY", TOKEN)
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+
+                        Set.privateLoader('.modal-content')
+                    },
+                    success: (data) => {
+                        $('#modal_password').modal('hide')
+                        toastr.success('Berhasil melakukan ganti password', 'Berhasil')
+                    },
+                    error: err => {
+                        toastr.error('Gagal melakukan ganti password', 'Gagal')
+                    },
+                    complete: () => {
+                        Set.closePrivateLoader('.modal-content')
+                    }
+                })
+            }
+        })
+    }
+
     return {
         init: (level) => {
             setRoute()
+            openPassword()
+            openProfile()
+            submitPassword()
             logout()
         }
     }
     
-})(librarySetting)
+})(librarySetting, mainUI)
 
 const userController = ((Set) => {
 
@@ -189,7 +345,6 @@ const userController = ((Set) => {
             $('#modal-add').modal('show');
         })
     }
-
 
     const submitAdd = table => {
         let form = $('.form-add')
@@ -414,11 +569,9 @@ const userController = ((Set) => {
                         data: "nama_lengkap",
                         render: (data, type, row) => {
                             return `
-                                <a href="#/user/${row.id_user}">
                                     ${row.nama_lengkap} 
                                     <br/>
-                                    ${row.username}
-                                </a>
+                                    Username : ${row.username}
                             `
                         }
                     },
@@ -1008,14 +1161,12 @@ const propertiController = ((Set, UI) => {
         })
     }
 
-    const submitIklan = (id, level) => {
+    const submitIklan = (form, level) => {
         $.ajax({
             url: `${BASE_URL}api/iklan/add`,
             type: 'POST',
             dataType: 'JSON',
-            data: {
-                kd_properti: id
-            },
+            data: $(form).serialize(),
             beforeSend: xhr => {
                 xhr.setRequestHeader("X-API-KEY", TOKEN)
                 xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
@@ -1023,7 +1174,8 @@ const propertiController = ((Set, UI) => {
             success: res => {
                 toastr.success(res.message, 'Berhasil')
 
-                fetchProperti(id, data => {
+                fetchProperti(res.input_id, data => {
+                    console.log(data);
                     UI.renderDetail(data, level, function () {
                         initializeDetailPlugin(level)
                     });
@@ -1084,13 +1236,12 @@ const propertiController = ((Set, UI) => {
             }
         });
 
-        $('.detail-container #btn_iklan').confirmation({
-            title: 'Apakah anda yakin?',
-            btnOkLabel: 'Confirm',
-            btnCancelLabel: 'Tidak',
-            onConfirm: function () {
-                let id = $('.detail-container #btn_iklan').data('id');
-                submitIklan(id, level);
+        $('.detail-container #form_iklan').validate({
+            rules: {
+                kd_iklan: 'required'
+            },
+            submitHandler: form => {
+                submitIklan(form, level)
             }
         });
 
@@ -1178,7 +1329,8 @@ const propertiController = ((Set, UI) => {
                         render: (data, type, row) => {
                             if(row.iklan !== null){
                                 return `
-                                    <span class="label label-success">${row.iklan.kd_hos}</span>
+                                    <span class="label label-success">${row.iklan.kd_iklan}</span>
+                                    ${row.iklan.kd_lainnya === null ? '' : `<span class="label label-success">${row.iklan.kd_lainnya}</span>`}
                                 `
                             } else {
                                 return 'Iklan belum tersedia'
@@ -1242,7 +1394,7 @@ const iklanController = ((Set) => {
         form.on('submit', function (e) {
             e.preventDefault()
 
-            let id = $('#edit_kd_hos').val()
+            let id = $('#edit_kd_iklan').val()
 
             $.ajax({
                 url: `${BASE_URL}api/iklan/edit/${id}`,
@@ -1308,9 +1460,11 @@ const iklanController = ((Set) => {
         table.on('click', '.btn-edit', function () {
             let id = $(this).data('id');
             let keterangan = $(this).data('keterangan');
+            let etc = $(this).data('lainnya');
 
             $('#keterangan').val(keterangan)
-            $('#edit_kd_hos').val(id)
+            $('#edit_kd_iklan').val(id)
+            $('#edit_kd_lainnya').val(etc)
 
             $('#modal-edit').modal('show');
         })
@@ -1342,11 +1496,11 @@ const iklanController = ((Set) => {
             const t_iklan = $('#t_iklan').DataTable({
                 columnDefs: [
                     {
-                        targets: [3],
+                        targets: [4, 5],
                         searchable: false
                     },
                     {
-                        targets: [3],
+                        targets: [4, 5],
                         orderable: false
                     }
                 ],
@@ -1374,8 +1528,9 @@ const iklanController = ((Set) => {
                 },
                 columns: [
                     {
-                        data: "kd_hos"
+                        data: "kd_iklan"
                     },
+                    
                     {
                         data: "properti.kd_properti",
                         render: (data, type, row) => {
@@ -1390,16 +1545,19 @@ const iklanController = ((Set) => {
                         data: "advertising.nama_lengkap",
                     },
                     {
+                        data: "kd_lainnya"
+                    },
+                    {
                         data: "keterangan",
                     },
                     {
-                        data: "kd_hos",
+                        data: "kd_iklan",
                         render: (data, type, row) => {
                             return `
                                 <div class="text-center">
                                     <div class="btn-group">
-                                        <a class="btn btn-success btn-edit" role="button" data-id="${row.kd_hos}" data-keterangan=${row.keterangan}><i class="fa fa-pencil"></i></a>
-                                        <a class="btn btn-danger btn-delete" role="button" data-id="${row.kd_hos}"><i class="fa fa-times"></i></a>
+                                        <a class="btn btn-success btn-edit" role="button" data-id="${row.kd_iklan}" data-lainnya="${row.kd_lainnya}" data-keterangan="${row.keterangan}"><i class="fa fa-pencil"></i></a>
+                                        <a class="btn btn-danger btn-delete" role="button" data-id="${row.kd_iklan}"><i class="fa fa-times"></i></a>
                                     </div>
                                 </div>
                             `
@@ -1420,7 +1578,7 @@ const iklanController = ((Set) => {
     }
 })(librarySetting)
 
-const showingController = ((Set) => {
+const showingController = ((Set, UI) => {
 
     const fetchProperti = () => {
         $.ajax({
@@ -1437,7 +1595,7 @@ const showingController = ((Set) => {
                 res.data.filter(i => i.terjual === 'T').map(v => {
                     let obj = {
                         id: v.kd_properti,
-                        text: v.kd_properti,
+                        text: v.iklan.kd_lainnya === null ? v.iklan.kd_iklan : `${v.iklan.kd_iklan} / ${v.iklan.kd_lainnya}`,
                         data_row: JSON.stringify(v)
                     }
 
@@ -1445,6 +1603,40 @@ const showingController = ((Set) => {
                 })
 
                 initializeSelect2(filtered)
+            },
+            error: err => {
+                let error = err.responseJSON
+                UI.renderSurveiError(error);
+            }
+        })
+    }
+
+    const fetchAgen = () => {
+        $.ajax({
+            url: `${BASE_URL}api/user`,
+            type: 'GET',
+            dataType: 'JSONP',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: res => {
+                let filtered = [];
+
+                res.data.filter(i => i.level === 'Agen' && i.aktif === 'Y').map(v => {
+                    let obj = {
+                        id: v.id_user,
+                        text: v.nama_lengkap,
+                        data_row: JSON.stringify(v)
+                    }
+
+                    filtered.push(obj)
+                })
+
+                $('#agen').select2({
+                    theme: "bootstrap",
+                    data: filtered
+                })
             },
             error: err => {
                 let error = err.responseJSON
@@ -1535,6 +1727,39 @@ const showingController = ((Set) => {
 
     }
 
+    const initializeDetailPlugin = () => {
+        $('.showing_schedule').datepicker()
+
+        $('.detail-container #btn_delete').confirmation({
+            title: 'Apakah anda yakin?',
+            btnOkLabel: 'Ya',
+            btnCancelLabel: 'Tidak',
+            onConfirm: function () {
+                let id = $('.detail-container #btn_delete').data('id');
+                submitDelete(id);
+            }
+        });
+    }
+
+    const submitDelete = id => {
+        $.ajax({
+            url: `${BASE_URL}api/showing/delete/${id}`,
+            type: 'DELETE',
+            dataType: 'JSON',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: res => {
+                toastr.success(res.message, 'Berhasil')
+                location.hash = `#/showing`
+            },
+            error: err => {
+                toastr.error(err.error, 'Gagal')
+            }
+        })
+    }
+
     return {
         data: (level) => {
             if(level === 'Cs'){
@@ -1566,16 +1791,7 @@ const showingController = ((Set) => {
                         xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
                     },
                     dataSrc: res => {
-                        let batal = res.data.filter(v => v.status === 'Batal').length;
-                        let proses = res.data.filter(v => v.status === 'Proses').length;
-                        let limit = res.data.filter(v => v.status === 'Limit').length;
-                        let selesai = res.data.filter(v => v.status === 'Selesai').length;
-
-                        $('#count_batal').text(batal)
-                        $('#count_proses').text(proses)
-                        $('#count_limit').text(limit)
-                        $('#count_selesai').text(selesai)
-
+                        $('#count_showing').text(res.data.length)
                         return res.data
                     },
                     error: err => {
@@ -1607,32 +1823,14 @@ const showingController = ((Set) => {
                         data: "nama_klien"
                     },
                     {
+                        data: "agen.nama_lengkap"
+                    },
+                    {
                         data: "tgl_showing",
                         render: (data, type, row) => {
                             return `
                                 ${row.tgl_showing} ${row.jam_showing}
                             `
-                        }
-                    },
-                    {
-                        data: "status",
-                        render: (data, type, row) => {
-                            let status;
-
-                            switch(row.status){
-                                case 'Proses':
-                                    return `<span class="label label-primary">Proses</span> `
-                                  
-                                case 'Limit':
-                                    return `<span class="label label-warning">Limit</span> `
-
-                                case 'Batal':
-                                    return `<span class="label label-danger">Batal</span> `
-                                    
-                                case 'Selesai':
-                                    return `<span class="label label-success">Selesai</span> `
-                            }
-
                         }
                     },
                     {
@@ -1645,6 +1843,7 @@ const showingController = ((Set) => {
 
         add: level => {
             fetchProperti()
+            fetchAgen()
             initializeDefaultPlugin()
             onChangeProperti()
             submitAdd()
@@ -1653,14 +1852,18 @@ const showingController = ((Set) => {
         edit: (level, id) => {
             fetchShowing(id, data => {
                 console.log(data);
-            })
+            })  
+        },
 
-            
+        detail: (level, id) => {
+            fetchShowing(id, data => {
+                UI.renderDetail(level, data, initializeDetailPlugin)
+            }) 
         }
     }
-})(librarySetting)
+})(librarySetting, showingUI)
 
-const dealController = ((Set) => {
+const dealController = ((Set, UI) => {
 
     const fetchProperti = () => {
         $.ajax({
@@ -1719,6 +1922,11 @@ const dealController = ((Set) => {
             rules: {
                 kd_properti: 'required',
                 tgl_deal: 'required',
+                pembayaran_klien: 'required',
+                pembayaran_pemilik: 'required',
+                form_komisi: 'required',
+                form_perjanjian: 'required',
+                form_listing: 'required'
             },
             submitHandler: form => {
                 $.ajax({
@@ -1745,6 +1953,58 @@ const dealController = ((Set) => {
                         Set.closeButtonLoader('#btn_submit')
                     }
                 })
+            }
+        })
+    }
+
+    const fetchDeal = (id, callback) => {
+        $.ajax({
+            url: `${BASE_URL}api/deal/${id}`,
+            type: 'GET',
+            dataType: 'JSONP',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: res => {
+                callback(res.data)
+            },
+            error: err => {
+                let error = err.responseJSON
+                UI.renderError(error);
+            }
+        })
+    }
+
+    const initializeDetailPlugin = () => {
+        $('.deal_schedule').datepicker()
+
+        $('.detail-container #btn_delete').confirmation({
+            title: 'Apakah anda yakin?',
+            btnOkLabel: 'Ya',
+            btnCancelLabel: 'Tidak',
+            onConfirm: function () {
+                let id = $('.detail-container #btn_delete').data('id');
+                submitDelete(id);
+            }
+        });
+    }
+
+    const submitDelete = id => {
+        $.ajax({
+            url: `${BASE_URL}api/deal/delete/${id}`,
+            type: 'DELETE',
+            dataType: 'JSON',
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-API-KEY", TOKEN)
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(USERNAME + ":" + PASSWORD))
+            },
+            success: res => {
+                toastr.success(res.message, 'Berhasil')
+                location.hash = `#/deal`
+            },
+            error: err => {
+                toastr.error(err.error, 'Gagal')
             }
         })
     }
@@ -1810,6 +2070,9 @@ const dealController = ((Set) => {
                         }
                     },
                     {
+                        data: "agen.nama_lengkap"
+                    },
+                    {
                         data: "tgl_deal"
                     },
                     {
@@ -1824,6 +2087,12 @@ const dealController = ((Set) => {
             fetchProperti()
             initializeDefaultPlugin()
             submitAdd()
+        },
+
+        detail: (level, id) => {
+            fetchDeal(id, data => {
+                UI.renderDetail(level, data, initializeDetailPlugin)
+            }) 
         }
     }
-})(librarySetting)
+})(librarySetting, dealUI)

@@ -344,23 +344,15 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="w1-fully_furnish">Fully Furnish</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control input-sm" name="fully_furnish" id="w1-fully_furnish">
-                                        <option value="" disabled selected></option>
-                                        <option value="Y">Ya</option>
-                                        <option value="T">Tidak</option>
-                                    </select>
+                                    <textarea class="form-control" name="fully_furnish" id="w1-fully_furnish"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 col-xs-6">
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" for="w1-semi_furnish">Semi Furnish</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control input-sm" name="semi_furnish" id="w1-semi_furnish">
-                                        <option value="" disabled selected></option>
-                                        <option value="Y">Ya</option>
-                                        <option value="T">Tidak</option>
-                                    </select>
+                                <textarea class="col-sm-8">
+                                    <textarea class="form-control" name="semi_furnish" id="w1-semi_furnish"></textarea>
                                 </div>
                             </div>
                         </div>

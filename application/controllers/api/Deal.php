@@ -27,7 +27,13 @@ class Deal extends CI_Controller {
         } else {
             $otorisasi  = $this->auth;
 
-            $deal   = $this->DealModel->fetch();
+            if($otorisasi->level === 'agen'){
+                $where = ['agen' => $otorisasi->id_user];
+            } else {
+                $where = [];
+            }
+
+            $deal   = $this->DealModel->fetch($where);
             $data   = array();
 
             if($deal->num_rows() === 0){
@@ -38,6 +44,7 @@ class Deal extends CI_Controller {
 
                     $json['kd_booking'] = $key->kd_booking;
                     $json['properti'] = $this->PropertiModel->hasOne(['kd_properti' => $key->kd_properti]);
+                    $json['agen'] = $this->UserModel->hasOne(['id_user' => $key->agen]);
                     $json['tgl_deal'] = $key->tgl_deal;
                     $json['pembayaran_klien'] = base_url().'doc/deal/pembayaran_klien/'.$key->pembayaran_klien;
                     $json['pembayaran_pemilik'] = base_url().'doc/deal/pembayaran_pemilik/'.$key->pembayaran_pemilik;
@@ -64,28 +71,27 @@ class Deal extends CI_Controller {
             $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
         } else {
             $otorisasi  = $this->auth;
-            $where = ['kd_foto' => $id];
-            $survei   = $this->SurveiFotoModel->detail($where)->row();
+            $where = ['kd_booking' => $id];
+            $deal   = $this->DealModel->detail($where)->row();
 
-            if(!$survei){
-                $this->response(['status' => false, 'error' => 'Survei foto tidak ditemukan'], 404);
+            if(!$deal){
+                $this->response(['status' => false, 'error' => 'Deal foto tidak ditemukan'], 404);
             } else {
                 $json = array();
 
-                $json['kd_foto'] = $survei->kd_foto;
-                $json['agen'] = $this->UserModel->hasOne(['id_user' => $survei->agen]);
-                $json['properti'] = $this->PropertiModel->hasOne(['kd_foto' => $survei->kd_foto]);
-                $json['alamat'] = $survei->alamat;
-                $json['status'] = $survei->status;
-                $json['form_komisi'] = base_url().'doc/deal/form_komisi/'.$survei->form_komisi;
-                $json['form_listing'] = base_url().'doc/deal/form_listing/'.$survei->form_listing;
-                $json['form_perjanjian'] = base_url().'doc/deal/form_perjanjian/'.$survei->form_perjanjian;
-                $json['pembayaran_klien'] = base_url().'doc/deal/pembayaran_klien/'.$survei->pembayaran_klien;
-                $json['pembayaran_pemilik'] = base_url().'doc/deal/pembayaran_pemilik/'.$survei->pembayaran_pemilik;
-                $json['keterangan'] = $survei->keterangan;
+                $json['kd_booking'] = $deal->kd_booking;
+                $json['properti'] = $this->PropertiModel->hasOne(['kd_properti' => $deal->kd_properti]);
+                $json['agen'] = $this->UserModel->hasOne(['id_user' => $deal->agen]);
+                $json['tgl_deal'] = $deal->tgl_deal;
+                $json['pembayaran_klien'] = base_url().'doc/deal/pembayaran_klien/'.$deal->pembayaran_klien;
+                $json['pembayaran_pemilik'] = base_url().'doc/deal/pembayaran_pemilik/'.$deal->pembayaran_pemilik;
+                $json['form_komisi'] = base_url().'doc/deal/form_komisi/'.$deal->form_komisi;
+                $json['form_perjanjian'] = base_url().'doc/deal/form_perjanjian/'.$deal->form_perjanjian;
+                $json['form_listing'] = base_url().'doc/deal/form_listing/'.$deal->form_listing;
+                $json['keterangan'] = $deal->keterangan;
                 $json['timestamps'] = array(
-                    'created_at' => $survei->created_at,
-                    'updated_at' => $survei->updated_at,
+                    'created_at' => $deal->created_at,
+                    'updated_at' => $deal->updated_at,
                 );
 
                 $data = $json;
@@ -126,6 +132,7 @@ class Deal extends CI_Controller {
                 $data = array(
                     'kd_booking' => $kd_booking,
                     'kd_properti' => $this->post('kd_properti'),
+                    'agen' => $otorisasi->id_user,
                     'tgl_deal' => date('Y-m-d', strtotime($this->post('tgl_deal'))),
                     'form_listing' => $this->upload_foto('form_listing', $kd_booking),
                     'form_komisi' => $this->upload_foto('form_komisi', $kd_booking),
@@ -210,79 +217,33 @@ class Deal extends CI_Controller {
             $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
         } else {
 
-            $survei = $this->SurveiFotoModel->detail(['kd_foto' => $id])->row();
+            $deal = $this->DealModel->detail(['kd_booking' => $id])->row();
 
-            if(!$survei){
-                 $this->response(['status' => false, 'error' => 'Survei foto tidak ditemukan'], 404);
+            if(!$deal){
+                 $this->response(['status' => false, 'error' => 'Deal tidak ditemukan'], 404);
             } else {
                 $where  = array(
-                    'kd_foto'   => $survei->kd_foto 
+                    'kd_booking'   => $deal->kd_booking 
                 );
 
-                $delete = $this->SurveiFotoModel->delete($where);
+                $delete = $this->DealModel->delete($where);
 
                 if(!$delete){
-                    $this->response(['status' => false, 'message' => 'Gagal menghapus survei foto'], 500);
+                    $this->response(['status' => false, 'message' => 'Gagal menghapus deal'], 500);
                 } else {
-                    $this->upload_foto('foto_1', $id);
-                    $this->upload_foto('foto_2', $id);
-                    $this->upload_foto('foto_3', $id);
-                    $this->upload_foto('foto_4', $id);
-                    $this->upload_foto('foto_5', $id);
-                    $this->response(['status' => true, 'message' => 'Berhasil menghapus survei foto'], 200);
-                }
-            }
-        } 
-    }
-
-    public function update_status_put($id)
-    {
-        if(!$this->auth){
-            $this->response(['status' => false, 'error' => 'Invalid Token'], 400);
-        } else {
-
-            $survei = $this->SurveiFotoModel->detail(['kd_foto' => $id])->row();
-
-            if(!$survei){
-                 $this->response(['status' => false, 'error' => 'Survei foto tidak ditemukan'], 404);
-            } else {
-                
-                $config = array(
-                    array(
-                        'field' => 'status',
-                        'label' => 'Status',
-                        'rules' => 'required|trim'
-                    )
-                );
-
-                $this->form_validation->set_data($this->put());
-                $this->form_validation->set_rules($config);
-
-                if(!$this->form_validation->run()){
-                    $this->response(['status' => false, 'error' => $this->form_validation->error_array()], 400);
-                } else {
-                    $where  = array(
-                        'kd_foto'   => $survei->kd_foto 
-                    );
-
-                    $data = array(
-                        'status' => $this->put('status')
-                    );
-
-                    $update = $this->SurveiFotoModel->edit($where, $data);
-
-                    if(!$update){
-                        $this->response(['status' => false, 'message' => 'Gagal update survei foto'], 500);
-                    } else {
-                        $this->response(['status' => true, 'message' => 'Berhasil update survei foto'], 200);
-                    }
+                    $this->upload_foto('form_listing', $id);
+                    $this->upload_foto('form_komisi', $id);
+                    $this->upload_foto('form_perjanjian', $id);
+                    $this->upload_foto('pembayaran_klien', $id);
+                    $this->upload_foto('pembayaran_pemilik', $id);
+                    $this->response(['status' => true, 'message' => 'Berhasil menghapus deal'], 200);
                 }
             }
         } 
     }
 
     public function delete_foto($name, $id){
-        $files = glob('doc/survei_foto/'.$name.'/'.$id.'.*');
+        $files = glob('doc/deal/'.$name.'/'.$id.'.*');
         foreach ($files as $key) {
             unlink($key);
         }

@@ -22,7 +22,7 @@ class IklanModel extends CI_Model {
             }
         }
 
-        $this->db->order_by('kd_hos', 'desc');
+        $this->db->order_by('kd_iklan', 'desc');
         return $this->db->get();
     }
 
@@ -62,7 +62,8 @@ class IklanModel extends CI_Model {
         } else {
             $iklan = $data->row();
 
-            $json['kd_hos'] = $iklan->kd_hos;
+            $json['kd_iklan'] = $iklan->kd_iklan;
+            $json['kd_lainnya'] = $iklan->kd_lainnya;
             $json['advertising'] = $this->UserModel->hasOne(['id_user' => $iklan->advertising]);
 
             return $json;

@@ -100,3 +100,9 @@
         </section>
     </div>
 </div>
+
+<script>
+    $(function(){
+        dashboardController.init('<?= $this->session->userdata('level') ?>')
+    })
+</script>

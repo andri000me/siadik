@@ -1,5 +1,5 @@
 <header class="page-header">
-    <h2>Add Survei Foto</h2>
+    <h2>Add Deal</h2>
 
     <div class="right-wrapper pull-right" style="margin-right: 15px;">
         <ol class="breadcrumbs">
@@ -9,8 +9,8 @@
                 </a>
             </li>
             <li>
-                <a href="#/survei_foto">
-                    <span>Survei Foto</span>
+                <a href="#/deal">
+                    <span>Deal</span>
                 </a>
             </li>
             <li><span>Add</span></li>
@@ -20,7 +20,7 @@
 
 <section class="panel">
     <header class="panel-heading">
-        <h2 class="panel-title">Form Survei Foto</h2>
+        <h2 class="panel-title">Form Deal</h2>
     </header>
     <div class="panel-body">
         <form class="form-horizontal form-bordered" id="form_add" enctype="multipart/form-data">
@@ -44,35 +44,35 @@
             <div class="form-group">
                 <label class="col-md-3 control-label" for="pembayaran_klien">Pembayaran Klien</label>
                 <div class="col-md-6">
-                    <input type="file" id="pembayaran_klien" name="pembayaran_klien" class="foto">
+                    <input type="file" id="pembayaran_klien" name="pembayaran_klien" class="foto" data-allowed-file-extensions="jpg png jpeg pdf">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="pembayaran_pemilik">Pembayaran Pemilik</label>
                 <div class="col-md-6">
-                    <input type="file" id="pembayaran_pemilik" name="pembayaran_pemilik" class="foto">
+                    <input type="file" id="pembayaran_pemilik" name="pembayaran_pemilik" class="foto" data-allowed-file-extensions="jpg png jpeg pdf">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="form_komisi">Form Komisi</label>
                 <div class="col-md-6">
-                    <input type="file" id="form_komisi" name="form_komisi" class="foto">
+                    <input type="file" id="form_komisi" name="form_komisi" class="foto" data-allowed-file-extensions="jpg png jpeg pdf">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="form_perjanjian">Form Perjanjian</label>
                 <div class="col-md-6">
-                    <input type="file" id="form_perjanjian" name="form_perjanjian" class="foto">
+                    <input type="file" id="form_perjanjian" name="form_perjanjian" class="foto" data-allowed-file-extensions="jpg png jpeg pdf">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="form_listing">Form Listing</label>
                 <div class="col-md-6">
-                    <input type="file" id="form_listing" name="form_listing" class="foto">
+                    <input type="file" id="form_listing" name="form_listing" class="foto" data-allowed-file-extensions="jpg png jpeg pdf">
                 </div>
             </div>
 

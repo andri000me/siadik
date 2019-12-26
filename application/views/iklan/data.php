@@ -15,7 +15,7 @@
     </header>
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <section class="panel">
                 <div class="panel-body">
                     <div class="small-chart pull-right">
@@ -43,9 +43,10 @@
             <table class="table table-bordered table-striped mb-none" id="t_iklan" style="width: 100%">
                 <thead>
                     <tr>
-                        <th>Kode Hos</th>
+                        <th>Kode Iklan</th>
                         <th>Kode Properti</th>
                         <th>Advertising</th>
+                        <th>Kode Lainnya</th>
                         <th>Keterangan</th>
                         <th>Action</th>
                     </tr>
@@ -65,12 +66,16 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
+                            <label for="kd_lainnya">Kode Iklan Lainnya</label>
+                            <input type="text" id="edit_kd_lainnya" name="kd_lainnya" class="form-control">
+                        </div>
+                        <div class="form-group">
                             <label for="keterangan">Keterangan</label>
                             <textarea type="text" id="keterangan" name="keterangan" class="form-control"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="kd_hos" id="edit_kd_hos">
+                        <input type="hidden" name="kd_iklan" id="edit_kd_iklan">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-success">Simpan</button>
                     </div>

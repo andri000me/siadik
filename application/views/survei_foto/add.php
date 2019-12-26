@@ -35,35 +35,35 @@
             <div class="form-group">
                 <label class="col-md-3 control-label" for="foto_1">Foto 1</label>
                 <div class="col-md-6">
-                    <input type="file" id="foto_1" name="foto_1" class="foto">
+                    <input type="file" id="foto_1" name="foto_1" class="foto" data-allowed-file-extensions="jpg png jpeg">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="foto_2">Foto 2</label>
                 <div class="col-md-6">
-                    <input type="file" id="foto_2" name="foto_2" class="foto">
+                    <input type="file" id="foto_2" name="foto_2" class="foto" data-allowed-file-extensions="jpg png jpeg">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="foto_3">Foto 3</label>
                 <div class="col-md-6">
-                    <input type="file" id="foto_3" name="foto_3" class="foto">
+                    <input type="file" id="foto_3" name="foto_3" class="foto" data-allowed-file-extensions="jpg png jpeg">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="foto_4">Foto 4</label>
                 <div class="col-md-6">
-                    <input type="file" id="foto_4" name="foto_4" class="foto">
+                    <input type="file" id="foto_4" name="foto_4" class="foto" data-allowed-file-extensions="jpg png jpeg">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="foto_5">Foto 5</label>
                 <div class="col-md-6">
-                    <input type="file" id="foto_5" name="foto_5" class="foto">
+                    <input type="file" id="foto_5" name="foto_5" class="foto" data-allowed-file-extensions="jpg png jpeg">
                 </div>
             </div>
 

@@ -1,3 +1,45 @@
+const mainUI = (() => {
+    return {
+        renderProfile: data => {
+            let html = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="thumb-info mb-md">
+                            <img src="${BASE_URL}assets/images/user-default.jpg" class="rounded img-responsive" alt="John Doe">
+                            <div class="thumb-info-title">
+                                <span class="thumb-info-inner">${data.nama_lengkap}</span>
+                                <span class="thumb-info-type">${data.level}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <ul class="simple-user-list text-right">
+                            <li>
+                                <span class="title">Nama</span>
+                                <span class="message truncate">${data.nama_lengkap}</span>
+                            </li>
+                            <li>
+                                <span class="title">Telepon</span>
+                                <span class="message truncate">${data.telepon}</span>
+                            </li>
+                            <li>
+                                <span class="title">Status</span>
+                                ${data.aktif === 'Y' ? '<span class="label label-primary">Aktif</span>' : '<span class="label label-danger">Tidak Aktif</span>'}
+                            </li>
+                            <li>
+                                <span class="title">Tanggal Terdaftar</span>
+                                <span class="message truncate">${data.timestamps.created_at}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+
+            $('#profile_container').html(html)
+        }
+    }
+})()
+
 const surveiFotoUI = (() => {
 
     const renderAction = (data, level) => {
@@ -244,7 +286,7 @@ const surveiFotoUI = (() => {
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="foto_1">Foto 1</label>
                             <div class="col-md-6">
-                                <input type="file" id="foto_1" name="foto_1" class="foto" data-default-file="${data.foto_1}">
+                                <input type="file" id="foto_1" name="foto_1" class="foto" data-default-file="${data.foto_1}" data-allowed-file-extensions="jpg png jpeg">
                                 <input type="hidden" id="foto_1_desc" name="foto_1_desc" value="${data.foto_1.substr(47)}">
                             </div>
                         </div>
@@ -252,7 +294,7 @@ const surveiFotoUI = (() => {
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="foto_2">Foto 2</label>
                             <div class="col-md-6">
-                                <input type="file" id="foto_2" name="foto_2" class="foto" data-default-file="${data.foto_2}">
+                                <input type="file" id="foto_2" name="foto_2" class="foto" data-default-file="${data.foto_2}" data-allowed-file-extensions="jpg png jpeg">
                                 <input type="hidden" id="foto_2_desc" name="foto_2_desc" value="${data.foto_2.substr(47)}">
                             </div>
                         </div>
@@ -260,7 +302,7 @@ const surveiFotoUI = (() => {
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="foto_3">Foto 3</label>
                             <div class="col-md-6">
-                                <input type="file" id="foto_3" name="foto_3" class="foto" data-default-file="${data.foto_3}">
+                                <input type="file" id="foto_3" name="foto_3" class="foto" data-default-file="${data.foto_3}" data-allowed-file-extensions="jpg png jpeg">
                                 <input type="hidden" id="foto_3_desc" name="foto_3_desc" value="${data.foto_3.substr(47)}">
                             </div>
                         </div>
@@ -268,7 +310,7 @@ const surveiFotoUI = (() => {
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="foto_4">Foto 4</label>
                             <div class="col-md-6">
-                                <input type="file" id="foto_4" name="foto_4" class="foto" data-default-file="${data.foto_4}">
+                                <input type="file" id="foto_4" name="foto_4" class="foto" data-default-file="${data.foto_4}" data-allowed-file-extensions="jpg png jpeg">
                                 <input type="hidden" id="foto_4_desc" name="foto_4_desc" value="${data.foto_4.substr(47)}">
                             </div>
                         </div>
@@ -276,7 +318,7 @@ const surveiFotoUI = (() => {
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="foto_5">Foto 5</label>
                             <div class="col-md-6">
-                                <input type="file" id="foto_5" name="foto_5" class="foto" data-default-file="${data.foto_5}">
+                                <input type="file" id="foto_5" name="foto_5" class="foto" data-default-file="${data.foto_5}" data-allowed-file-extensions="jpg png jpeg">
                                 <input type="hidden" id="foto_5_desc" name="foto_5_desc" value="${data.foto_5.substr(47)}">
                             </div>
                         </div>
@@ -310,7 +352,6 @@ const surveiFotoUI = (() => {
 
 const propertiUI = (() => {
     const renderAction = (data, level) => {
-        console.log(data);
         let action;
 
         switch (level) {
@@ -330,7 +371,20 @@ const propertiUI = (() => {
                     action = `<h5 class="text-center">Tidak tersedia</h5>`
                 } else {
                     action = `
-                        <button class="btn btn-md btn-block btn-primary" id="btn_iklan" data-id="${data.kd_properti}" data-placement="bottom">Posting Sebagai Iklan</button>
+                        <form id="form_iklan">
+                            <div class="form-group">
+                                <label for="kd_iklan">Kode Iklan PINRUMAH</label>
+                                <input type="text" class="form-control" id="kd_iklan" name="kd_iklan">
+                            </div>
+                            <div class="form-group">
+                                <label for="kd_iklan">Kode Iklan Lainnya</label>
+                                <input type="text" class="form-control" id="kd_lainnya" name="kd_lainnya">
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" id="kd_properti" name="kd_properti" value="${data.kd_properti}">
+                                <button class="btn btn-md btn-block btn-primary" id="btn_iklan">Posting Sebagai Iklan</button>
+                            </div>
+                        </form>
                     `
                 }
                 break;
@@ -349,11 +403,11 @@ const propertiUI = (() => {
             properti = `
                 <section class="panel">
                     <header class="panel-heading panel-heading-transparent">
-                        <h2 class="panel-title">Kode Hos</h2>
+                        <h2 class="panel-title">Kode Iklan</h2>
                     </header>
                     <div class="panel-body">
                         <div class="text-center">
-                            <h4 class="text-primary">${data.iklan.kd_hos}</h4>
+                            <h4 class="text-primary">${data.iklan.kd_iklan}</h4>
                         </div>
                     </div>
                 </section>
@@ -802,5 +856,230 @@ const propertiUI = (() => {
 
             callback()
         },
+    }
+})()
+
+const showingUI = (() => {
+
+    const renderAction = (level, data) => {
+        switch(level){
+            case 'Cs': 
+                if(data.status === 'Proses' && data.properti.terjual === 'T'){
+                    return `
+                        <a class="btn btn-md btn-block btn-success" href="#/showing/edit/${data.kd_showing}">Edit</a>
+                        <button class="btn btn-md btn-block btn-danger" id="btn_delete" data-placement="bottom" data-id="${data.kd_showing}">Hapus</button>
+                    `
+                } else {
+                    return `<h5 class="text-center">Tidak tersedia</h5>`
+                }
+
+            default:
+                return `<h5 class="text-center">Tidak tersedia</h5>`
+        }
+    }
+
+    const renderProperti = (data) => {
+        if(data === null){
+            return `
+                <h5 class="text-center">Properti tidak tersedia</h5>
+            `
+        } else {
+            return `
+                <h4 class="text-primary text-center"><a href="#/properti/${data.kd_properti}">${data.kd_properti}</a></h4>
+            `
+        }
+    }
+    
+    return {
+        renderDetail: (level, data, callback) => {
+            let html = `
+            
+                <div class="row">
+                    <div class="col-md-8">
+                        <section class="panel panel-featured">
+                            <header class="panel-heading">
+                                <h2 class="panel-title">Showing Schedule</h2>
+                            </header>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul class="simple-user-list">
+                                            <li>
+                                                <span class="title">Kode Showing</span>
+                                                <span class="message truncate">${data.kd_showing}</span>
+                                            </li>
+                                            <li>
+                                                <span class="title">Agen</span>
+                                                <span class="message truncate">${data.agen.nama_lengkap}</span>
+                                            </li>
+                                            <li>
+                                                <span class="title">Nama Klien / Telepon</span>
+                                                <span class="message truncate">${data.nama_klien} - ${data.tlp_klien}</span>
+                                            </li>
+                                            <li>
+                                                <span class="title">Tanggal/Jam</span>
+                                                <span class="message truncate">${data.tgl_showing} ${data.jam_showing}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="showing_schedule" data-date-format="yyyy/mm/dd" data-date="${data.tgl_showing}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-md-4">
+                        <section class="panel">
+                            <header class="panel-heading panel-heading-transparent">
+                                <h2 class="panel-title">Action</h2>
+                            </header>
+                            <div class="panel-body">
+                                ${renderAction(level, data)}
+                            </div>
+                        </section>
+
+                        <section class="panel">
+                            <header class="panel-heading panel-heading-transparent">
+                                <h2 class="panel-title">Kode Properti</h2>
+                            </header>
+                            <div class="panel-body">
+                                ${renderProperti(data.properti)}
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            
+            `
+
+            $('.detail-container').html(html)
+            callback()
+        }
+    }
+})()
+
+const dealUI = (() => {
+
+    const renderAction = (data, level) => {
+        switch (level) {
+            case 'Agen':
+                return `
+                    <a class="btn btn-md btn-block btn-success" href="#/deal/edit/${data.kd_booking}">Edit</a>
+                    <button class="btn btn-md btn-block btn-danger" id="btn_delete" data-placement="bottom" data-id="${data.kd_booking}">Hapus</button>
+                `
+            default:
+                return `<h5 class="text-center">Tidak tersedia</h5>`
+        }
+    }
+
+    const renderProperti = data => {
+        if (data === null) {
+            return `
+                <h5 class="text-center">Properti tidak tersedia</h5>
+            `
+        } else {
+            return `
+                <h4 class="text-primary text-center"><a href="#/properti/${data.kd_properti}">${data.kd_properti}</a></h4>
+            `
+        }
+    }
+
+    return {
+        renderDetail: (level, data, callback) => {
+            console.log(data)
+            let html = `
+               <div class="row">
+                    <div class="col-md-9">
+                        <div class="tabs">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a href="#pembayaran_klien" data-toggle="tab">Pembayaran Klien</a>
+                                </li>
+                                <li>
+                                    <a href="#pembayaran_pemilik" data-toggle="tab">Pembayaran Pemilik</a>
+                                </li>
+                                <li>
+                                    <a href="#form_komisi" data-toggle="tab">Form Komisi</a>
+                                </li>
+                                <li>
+                                    <a href="#form_perjanjian" data-toggle="tab">Form Perjanjian</a>
+                                </li>
+                                <li>
+                                    <a href="#form_listing" data-toggle="tab">Form Listing</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="pembayaran_klien" class="tab-pane active">
+                                    <embed src="${data.pembayaran_klien}" width="100%" height="500px">
+                                </div>
+
+                                <div id="pembayaran_pemilik" class="tab-pane">
+                                    <embed src="${data.pembayaran_pemilik}" width="100%" height="500px">
+                                </div>
+
+                                <div id="form_komisi" class="tab-pane">
+                                    <embed src="${data.form_komisi}" width="100%" height="500px">
+                                </div>
+
+                                <div id="form_perjanjian" class="tab-pane">
+                                    <embed src="${data.form_perjanjian}" width="100%" height="500px">
+                                </div>
+
+                                <div id="form_listing" class="tab-pane">
+                                    <embed src="${data.form_listing}" width="100%" height="500px">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <section class="panel">
+                            <header class="panel-heading panel-heading-transparent">
+                                <h2 class="panel-title">Action</h2>
+                            </header>
+                            <div class="panel-body">
+                                ${renderAction(data, level)}
+                            </div>
+                        </section>
+
+                        <section class="panel">
+                            <header class="panel-heading panel-heading-transparent">
+                                <h2 class="panel-title">Detail</h2>
+                            </header>
+                            
+                            <div class="deal_schedule" data-date-format="yyyy/mm/dd" data-date="${data.tgl_deal}"></div>
+                            
+                            <br/>
+
+                            <div class="panel-body">
+                                <label>Keterangan</label>
+                                <p>
+                                    ${data.keterangan}
+                                </p>
+                            </div>
+                        </section>
+
+                        <section class="panel">
+                            <header class="panel-heading panel-heading-transparent">
+                                <h2 class="panel-title">Properti</h2>
+                            </header>
+                            <div class="panel-body">
+                                ${renderProperti(data.properti)}
+                            </div>
+                        </section>
+                    </div>
+               </div> 
+            `
+
+            $('.detail-container').html(html)
+
+            callback()
+        },
+
+        renderError: err => {
+            let html = `<h1 class="text-center">${err.error}</h1>`
+
+            $('#edit-container, .detail-container').html(html);
+        }
     }
 })()
